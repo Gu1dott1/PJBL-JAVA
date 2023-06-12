@@ -1,126 +1,171 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CartolaFC extends JFrame {
+abstract class Player {
+    String name;
+    String position;
+    String club;
+    String price;
+    String playerAverage;
+    String playerLastScore;
+
+    Player(String name, String position, String club, String price, String playerAverage, String playerLastScore) {
+        this.name = name;
+        this.position = position;
+        this.club = club;
+        this.price = price;
+        this.playerAverage = playerAverage;
+        this.playerLastScore = playerLastScore;
+    }
+
+    abstract void playerInfo();
+}
+
+class SoccerPlayer extends Player {
+    SoccerPlayer(String name, String position, String club, String price, String playerAverage, String playerLastScore) {
+        super(name, position, club, price, playerAverage, playerLastScore);
+    }
+
+    @Override
+    void playerInfo() {
+        System.out.println("Player Info:");
+    }
+}
+
+class CustomException extends Exception {
+    CustomException(String message) {
+        super(message);
+    }
+}
+
+public class CartolaFC extends JFrame implements ActionListener {
     private List<JButton> positionButtons;
     private JPanel playersPanel;
-    private List<String> boughtPlayers;
+    private List<Player> jogadoresComprados;
 
     public CartolaFC() {
         setTitle("Cartola FC");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 600);
+        setSize(400, 300);
         setLayout(new BorderLayout());
 
-        
-        boughtPlayers = new ArrayList<>();
-
-        
         positionButtons = new ArrayList<>();
         positionButtons.add(new JButton("Goleiro"));
-        positionButtons.add(new JButton("Zagueiro"));
-        positionButtons.add(new JButton("Zagueiro"));
-        positionButtons.add(new JButton("Lateral"));
-        positionButtons.add(new JButton("Lateral"));
-        positionButtons.add(new JButton("Meia"));
-        positionButtons.add(new JButton("Meia"));
-        positionButtons.add(new JButton("Meia"));
-        positionButtons.add(new JButton("Atacante"));
-        positionButtons.add(new JButton("Atacante"));
-        positionButtons.add(new JButton("Atacante"));
-        
+        positionButtons.add(new JButton("Zagueiro 1"));
+        positionButtons.add(new JButton("Zagueiro 2"));
+        positionButtons.add(new JButton("Lateral 1"));
+        positionButtons.add(new JButton("Lateral 2"));
+        positionButtons.add(new JButton("Meia 1"));
+        positionButtons.add(new JButton("Meia 2"));
+        positionButtons.add(new JButton("Meia 3"));
+        positionButtons.add(new JButton("Atacante 1"));
+        positionButtons.add(new JButton("Atacante 2"));
+        positionButtons.add(new JButton("Atacante 3"));
 
-        
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         for (JButton button : positionButtons) {
-            button.addActionListener(this::handlePositionButton);
+            button.addActionListener(this);
+            button.setPreferredSize(new Dimension(100, 30));
             buttonPanel.add(button);
         }
+        
+        JButton saveButton = new JButton("Salvar");
+        saveButton.addActionListener(this);
+        buttonPanel.add(saveButton);
+        
         add(buttonPanel, BorderLayout.WEST);
 
-        
         playersPanel = new JPanel();
         playersPanel.setLayout(new BoxLayout(playersPanel, BoxLayout.Y_AXIS));
-        add(new JScrollPane(playersPanel), BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(playersPanel);
+        add(scrollPane, BorderLayout.CENTER);
+
+        jogadoresComprados = new ArrayList<>();
 
         setVisible(true);
     }
 
-    private void handlePositionButton(ActionEvent e) {
-        JButton clickedButton = (JButton) e.getSource();
-        String position = clickedButton.getText();
-
-        
-        playersPanel.removeAll();
-
-        
-        List<String> players = filterPlayersByPosition(position);
-
-        
-        for (String player : players) {
-            String[] data = player.split(",");
-            String playerName = data[0];
-            String playerPosition = data[1];
-            String playerClub = data[2];
-            String playerPrice = data[3];
-            String playerAverage = data[5];
-            String playerLastScore = data[6];
-
-            String playerInfo = "Nome: " + playerName +
-                    ", Posição: " + playerPosition +
-                    ", Clube: " + playerClub +
-                    ", Preço: " + playerPrice +
-                    ", Média: " + playerAverage +
-                    ", Última Pontuação: " + playerLastScore;
-
-            JButton buyButton = new JButton("Comprar " + playerName);
-            buyButton.addActionListener(actionEvent -> showPlayerInfo(playerInfo));
-
-            JPanel playerPanel = new JPanel();
-            playerPanel.add(new JLabel(playerInfo));
-            playerPanel.add(buyButton);
-
-            playersPanel.add(playerPanel);
-        }
-
-        
-        playersPanel.revalidate();
-        playersPanel.repaint();
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new CartolaFC();
+            }
+        });
     }
 
-    private void showPlayerInfo(String playerInfo) {
-        JDialog dialog = new JDialog(this, "Informações do Jogador", true);
-        dialog.setLayout(new BorderLayout());
-        dialog.setSize(300, 200);
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JButton clickedButton = (JButton) e.getSource();
+        String buttonText = clickedButton.getText();
 
-        JTextArea infoArea = new JTextArea(playerInfo);
-        infoArea.setEditable(false);
-        dialog.add(new JScrollPane(infoArea), BorderLayout.CENTER);
+        if (buttonText.equals("Salvar")) {
+            saveJogadoresComprados();
+        } else {
+            String position = buttonText.split(" ")[0];
+            List<String> players = filterPlayersByPosition(position);
 
-        JButton buyButton = new JButton("Comprar");
-        buyButton.addActionListener(actionEvent -> {
-            boughtPlayers.add(playerInfo);
-            saveBoughtPlayers();
-            dialog.dispose();
-        });
-        dialog.add(buyButton, BorderLayout.SOUTH);
+            playersPanel.removeAll();
+            for (String player : players) {
+                String[] data = player.split(",");
+                String playerName = data[0];
+                String playerPosition = data[1];
+                String playerClub = data[2];
+                String playerPrice = data[3];
+                String playerAverage = data[4];
+                String playerLastScore = data[5];
 
-        dialog.setVisible(true);
+                Player soccerPlayer = new SoccerPlayer(playerName, playerPosition, playerClub, playerPrice, playerAverage, playerLastScore);
+                JPanel playerPanel = new JPanel();
+                playerPanel.setLayout(new BoxLayout(playerPanel, BoxLayout.Y_AXIS));
+                playerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+                JLabel nameLabel = new JLabel("Nome: " + playerName);
+                JLabel positionLabel = new JLabel("Posição: " + playerPosition);
+                JLabel clubLabel = new JLabel("Clube: " + playerClub);
+                JLabel priceLabel = new JLabel("Preço: " + playerPrice);
+                JLabel averageLabel = new JLabel("Média: " + playerAverage);
+                JLabel lastScoreLabel = new JLabel("Última Pontuação: " + playerLastScore);
+
+                JButton buyButton = new JButton("Comprar");
+                buyButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        jogadoresComprados.add(soccerPlayer);
+                        JOptionPane.showMessageDialog(CartolaFC.this, "Jogador comprado: " + playerName);
+                        clickedButton.setEnabled(false);
+                    }
+                });
+
+                playerPanel.add(nameLabel);
+                playerPanel.add(positionLabel);
+                playerPanel.add(clubLabel);
+                playerPanel.add(priceLabel);
+                playerPanel.add(averageLabel);
+                playerPanel.add(lastScoreLabel);
+                playerPanel.add(buyButton);
+
+                playersPanel.add(playerPanel);
+            }
+
+            playersPanel.revalidate();
+            playersPanel.repaint();
+        }
     }
 
     private List<String> filterPlayersByPosition(String position) {
         List<String> players = new ArrayList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader("jogadoresEditados.csv"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("jogadores.csv"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
-                if (data.length >= 2 && data[1].equalsIgnoreCase(position)) {
+                if (data.length >= 6 && data[1].equalsIgnoreCase(position)) {
                     players.add(line);
                 }
             }
@@ -131,22 +176,15 @@ public class CartolaFC extends JFrame {
         return players;
     }
 
-    
-    private void saveBoughtPlayers() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("jogadoresComprados.csv"))) {
-            for (String player : boughtPlayers) {
-                writer.write(player + "\n");
+    private void saveJogadoresComprados() {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("jogadoresComprados.csv"))) {
+            for (Player jogador : jogadoresComprados) {
+                String line = jogador.name + "," + jogador.position + "," + jogador.club + "," + jogador.price + "," + jogador.playerAverage + "," + jogador.playerLastScore;
+                bw.write(line);
+                bw.newLine();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                new CartolaFC();
-            }
-        });
     }
 }
