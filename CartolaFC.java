@@ -119,7 +119,9 @@ public class CartolaFC extends JFrame implements ActionListener {
         jogadoresComprados = new ArrayList<>();
         setVisible(true);
     }
-
+    
+    // Essa é a função principal do programa. Ela inicia a aplicação Swing ao criar uma instância da classe "CartolaFC" dentro de um objeto Runnable e passá-lo 
+    // para o método invokeLater() da classe SwingUtilities. Isso garante que a criação e exibição da janela ocorram na thread de despacho de eventos do Swing.
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -127,7 +129,12 @@ public class CartolaFC extends JFrame implements ActionListener {
             }
         });
     }
-
+    
+    // Este é o método de tratamento de eventos para os botões. Quando um botão é clicado, esse método é chamado. 
+    // Ele começa obtendo o botão que foi clicado e o texto do botão. Se o texto do botão for "Salvar", chama o método salvarJogadoresComprados(). 
+    // Caso contrário, ele extrai a posição do texto do botão e chama o método filtrarJogadoresPorPosição() para obter a lista de jogadores correspondentes à posição selecionada.
+    // Em seguida, o método remove todos os componentes do painel de jogadores e itera sobre a lista de jogadores para criar e adicionar painéis individuais para cada jogador.
+    // Após adicionar os painéis dos jogadores, o método chama os métodos revalidate() e repaint() do painel de jogadores para garantir que as mudanças sejam exibidas corretamente na interface do usuário.
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton botãoClicado = (JButton) e.getSource();
@@ -192,7 +199,11 @@ public class CartolaFC extends JFrame implements ActionListener {
             painelDeJogadores.repaint();
         }
     }
-
+    
+    // Esse método recebe uma posição como parâmetro e retorna uma lista de jogadores filtrados por essa posição. 
+    // Ele lê os dados de um arquivo chamado "jogadoresEditados.csv", onde cada linha contém informações separadas por vírgulas sobre um jogador.
+    // O método percorre cada linha do arquivo, divide a linha em um array de strings usando a vírgula como separador e verifica se o segundo elemento (posição) corresponde à posição fornecida. 
+    // Se for o caso, a linha inteira é adicionada à lista de jogadores.
     private List<String> filtrarJogadoresPorPosição(String posição) {
         List<String> jogadores = new ArrayList<>();
 
@@ -210,7 +221,10 @@ public class CartolaFC extends JFrame implements ActionListener {
 
         return jogadores;
     }
-
+    
+    // Este método é responsável por salvar os jogadores comprados em um arquivo chamado "jogadoresComprados.csv". 
+    // Ele itera sobre a lista de jogadores comprados e grava as informações de cada jogador (nome, posição, clube e preço) como uma linha no arquivo. 
+    // Cada jogador é separado por vírgulas, e o método write() é usado para escrever a linha no arquivo. O método newLine() é chamado para inserir uma nova linha após cada jogador.
     private void salvarJogadoresComprados() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("jogadoresComprados.csv"))) {
             for (Jogador jogador : jogadoresComprados) {
