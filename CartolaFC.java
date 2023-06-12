@@ -1,3 +1,4 @@
+// Este trecho de código importa as classes e pacotes necessários para a implementação da interface gráfica, manipulação de eventos, operações de entrada e saída, e manipulação de listas.
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -6,6 +7,10 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
+// Esta é uma classe abstrata chamada "Jogador" que define as características básicas de um jogador. 
+// Ela possui seis atributos (nome, posição, clube, preço, médiaDoJogador e últimaPontuação) e um construtor para inicializar esses atributos. 
+// Também possui um método abstrato "informaçõesDoJogador()" que será implementado nas classes derivadas.
 abstract class Jogador {
     String nome;
     String posição;
@@ -25,7 +30,8 @@ abstract class Jogador {
 
     abstract void informaçõesDoJogador();
 }
-
+// Essa é uma classe derivada da classe abstrata "Jogador". Ela estende a classe "Jogador" e implementa o método abstrato "informaçõesDoJogador()". 
+// Essa implementação apenas imprime uma mensagem na saída padrão.
 class JogadorDeFutebol extends Jogador {
     JogadorDeFutebol(String nome, String posição, String clube, double preço, String médiaDoJogador, String últimaPontuação) {
         super(nome, posição, clube, preço, médiaDoJogador, últimaPontuação);
@@ -36,26 +42,35 @@ class JogadorDeFutebol extends Jogador {
         System.out.println("Informações do Jogador:");
     }
 }
-
+// Esta é uma classe de exceção personalizada que estende a classe "Exception". Ela permite criar exceções personalizadas com uma mensagem específica.
 class ExceçãoPersonalizada extends Exception {
     ExceçãoPersonalizada(String mensagem) {
         super(mensagem);
     }
 }
-
+// Esta linha declara uma classe chamada "CartolaFC" que herda da classe "JFrame" e implementa a interface "ActionListener". 
+// Isso significa que a classe "CartolaFC" é uma janela de aplicativo que pode responder a eventos de ação.
 public class CartolaFC extends JFrame implements ActionListener {
+    
+    // Essas linhas declaram algumas variáveis utilizadas pela classe "CartolaFC". 
+    // São declaradas uma lista de botões de posição, um painel para exibir os jogadores, uma lista de jogadores comprados, 
+    // um valor de saldo inicializado como 100.0 e um rótulo para exibir o saldo.
     private List<JButton> botõesDePosição;
     private JPanel painelDeJogadores;
     private List<Jogador> jogadoresComprados;
     private double saldo = 100.0;
     private JLabel saldoLabel;
-
+    
+    // Este é o construtor da classe "CartolaFC". Ele define o título da janela como "Cartola FC", define a operação de fechamento padrão para encerrar o 
+    // aplicativo quando a janela for fechada, define o tamanho da janela como 400x300 pixels e define o layout da janela como BorderLayout.
     public CartolaFC() {
         setTitle("Cartola FC");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400, 300);
         setLayout(new BorderLayout());
 
+        // Essas linhas criam uma lista de botões de posição e adicionam botões a essa lista. 
+        // Cada botão é criado com um rótulo que representa uma posição de jogador no time de futebol na formacao 4-3-3.
         botõesDePosição = new ArrayList<>();
         botõesDePosição.add(new JButton("Goleiro"));
         botõesDePosição.add(new JButton("Zagueiro 1"));
@@ -68,7 +83,10 @@ public class CartolaFC extends JFrame implements ActionListener {
         botõesDePosição.add(new JButton("Atacante 1"));
         botõesDePosição.add(new JButton("Atacante 2"));
         botõesDePosição.add(new JButton("Atacante 3"));
-
+        
+        // Essas linhas criam um painel para exibir os botões. O layout do painel é definido como BoxLayout na orientação vertical. 
+        // Um loop é usado para adicionar cada botão da lista de botões de posição ao painel de botões. 
+        // Além disso, um ouvinte de ação é adicionado a cada botão, definindo seu tamanho preferido como 100x30 pixels.
         JPanel painelDeBotões = new JPanel();
         painelDeBotões.setLayout(new BoxLayout(painelDeBotões, BoxLayout.Y_AXIS));
         for (JButton botão : botõesDePosição) {
@@ -76,23 +94,29 @@ public class CartolaFC extends JFrame implements ActionListener {
             botão.setPreferredSize(new Dimension(100, 30));
             painelDeBotões.add(botão);
         }
-
+        
+        // Essas linhas criam um novo botão chamado "Salvar" e o adicionam ao painel de botões. Também é adicionado um ouvinte de ação ao botão.
         JButton botãoSalvar = new JButton("Salvar");
         botãoSalvar.addActionListener(this);
         painelDeBotões.add(botãoSalvar);
-
+        
+        // Esta linha cria um rótulo de texto que exibe o saldo atual e o adiciona ao painel de botões.
         saldoLabel = new JLabel("Saldo: R$ " + saldo);
         painelDeBotões.add(saldoLabel);
-
+        
+        // Esta linha adiciona o painel de botões à janela "CartolaFC" na posição oeste (lado esquerdo).
         add(painelDeBotões, BorderLayout.WEST);
-
+        
+        // Essas linhas criam um painel de rolagem que contém um painel para exibir os jogadores. 
+        // O layout do painel de jogadores é definido como BoxLayout na orientação vertical. 
+        // Em seguida, o painel de jogadores é adicionado ao painel de rolagem e o painel de rolagem é adicionado à janela "CartolaFC" na posição central.
         painelDeJogadores = new JPanel();
         painelDeJogadores.setLayout(new BoxLayout(painelDeJogadores, BoxLayout.Y_AXIS));
         JScrollPane painelDeRolagem = new JScrollPane(painelDeJogadores);
         add(painelDeRolagem, BorderLayout.CENTER);
 
+        // Essas linhas inicializam a lista de jogadores comprados como uma nova lista vazia e tornam a janela "CartolaFC" visível.
         jogadoresComprados = new ArrayList<>();
-
         setVisible(true);
     }
 
