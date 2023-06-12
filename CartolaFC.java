@@ -84,5 +84,22 @@ public class CartolaFC extends JFrame implements ActionListener {
             outputTextArea.append(playerInfo);
         }
     }
+        private List<String> filterPlayersByPosition(String position) {
+        List<String> players = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader("jogadoresEditados.csv"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length >= 2 && data[1].equalsIgnoreCase(position)) {
+                    players.add(line);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return players;
+    }
 
 }
