@@ -51,7 +51,7 @@ class ExceçãoPersonalizada extends Exception {
 // Esta linha declara uma classe chamada "CartolaFC" que herda da classe "JFrame" e implementa a interface "ActionListener". 
 // Isso significa que a classe "CartolaFC" é uma janela de aplicativo que pode responder a eventos de ação.
 public class CartolaFC extends JFrame implements ActionListener {
-    
+
     // Essas linhas declaram algumas variáveis utilizadas pela classe "CartolaFC". 
     // São declaradas uma lista de botões de posição, um painel para exibir os jogadores, uma lista de jogadores comprados, 
     // um valor de saldo inicializado como 100.0 e um rótulo para exibir o saldo.
@@ -60,7 +60,7 @@ public class CartolaFC extends JFrame implements ActionListener {
     private List<Jogador> jogadoresComprados;
     private double saldo = 100.0;
     private JLabel saldoLabel;
-    
+
     // Este é o construtor da classe "CartolaFC". Ele define o título da janela como "Cartola FC", define a operação de fechamento padrão para encerrar o 
     // aplicativo quando a janela for fechada, define o tamanho da janela como 400x300 pixels e define o layout da janela como BorderLayout.
     public CartolaFC() {
@@ -83,7 +83,7 @@ public class CartolaFC extends JFrame implements ActionListener {
         botõesDePosição.add(new JButton("Atacante 1"));
         botõesDePosição.add(new JButton("Atacante 2"));
         botõesDePosição.add(new JButton("Atacante 3"));
-        
+
         // Essas linhas criam um painel para exibir os botões. O layout do painel é definido como BoxLayout na orientação vertical. 
         // Um loop é usado para adicionar cada botão da lista de botões de posição ao painel de botões. 
         // Além disso, um ouvinte de ação é adicionado a cada botão, definindo seu tamanho preferido como 100x30 pixels.
@@ -94,19 +94,19 @@ public class CartolaFC extends JFrame implements ActionListener {
             botão.setPreferredSize(new Dimension(100, 30));
             painelDeBotões.add(botão);
         }
-        
+
         // Essas linhas criam um novo botão chamado "Salvar" e o adicionam ao painel de botões. Também é adicionado um ouvinte de ação ao botão.
         JButton botãoSalvar = new JButton("Salvar");
         botãoSalvar.addActionListener(this);
         painelDeBotões.add(botãoSalvar);
-        
+
         // Esta linha cria um rótulo de texto que exibe o saldo atual e o adiciona ao painel de botões.
         saldoLabel = new JLabel("Saldo: R$ " + saldo);
         painelDeBotões.add(saldoLabel);
-        
+
         // Esta linha adiciona o painel de botões à janela "CartolaFC" na posição oeste (lado esquerdo).
         add(painelDeBotões, BorderLayout.WEST);
-        
+
         // Essas linhas criam um painel de rolagem que contém um painel para exibir os jogadores. 
         // O layout do painel de jogadores é definido como BoxLayout na orientação vertical. 
         // Em seguida, o painel de jogadores é adicionado ao painel de rolagem e o painel de rolagem é adicionado à janela "CartolaFC" na posição central.
@@ -119,7 +119,7 @@ public class CartolaFC extends JFrame implements ActionListener {
         jogadoresComprados = new ArrayList<>();
         setVisible(true);
     }
-    
+
     // Essa é a função principal do programa. Ela inicia a aplicação Swing ao criar uma instância da classe "CartolaFC" dentro de um objeto Runnable e passá-lo 
     // para o método invokeLater() da classe SwingUtilities. Isso garante que a criação e exibição da janela ocorram na thread de despacho de eventos do Swing.
     public static void main(String[] args) {
@@ -129,17 +129,31 @@ public class CartolaFC extends JFrame implements ActionListener {
             }
         });
     }
-    
-    // Este é o método de tratamento de eventos para os botões. Quando um botão é clicado, esse método é chamado. 
-    // Ele começa obtendo o botão que foi clicado e o texto do botão. Se o texto do botão for "Salvar", chama o método salvarJogadoresComprados(). 
-    // Caso contrário, ele extrai a posição do texto do botão e chama o método filtrarJogadoresPorPosição() para obter a lista de jogadores correspondentes à posição selecionada.
-    // Em seguida, o método remove todos os componentes do painel de jogadores e itera sobre a lista de jogadores para criar e adicionar painéis individuais para cada jogador.
-    // Após adicionar os painéis dos jogadores, o método chama os métodos revalidate() e repaint() do painel de jogadores para garantir que as mudanças sejam exibidas corretamente na interface do usuário.
+
+    // Esse método é um listener de eventos que é acionado quando um botão é clicado. Ele começa obtendo o botão que foi clicado, 
+    // convertendo o evento ActionEvent para um objeto JButton e armazenando-o em uma variável botãoClicado. 
+    // Em seguida, o texto do botão é obtido através do método getText() e armazenado em uma variável textoDoBotão.
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton botãoClicado = (JButton) e.getSource();
         String textoDoBotão = botãoClicado.getText();
 
+        // Aqui, é feita uma verificação do texto do botão. Se o texto for "Salvar", o método salvarJogadoresComprados() é chamado. 
+        // Caso contrário, o texto do botão é dividido por um espaço em branco usando o método split(" "), e a primeira parte (a posição) é armazenada na variável posição.
+        // Em seguida, o método filtrarJogadoresPorPosição(posição) é chamado para obter uma lista de jogadores filtrados por posição.
+        // O painel de jogadores (painelDeJogadores) é limpo usando o método removeAll() para remover todos os componentes anteriores.
+        // Então, começa um loop for que itera sobre a lista de jogadores filtrados. Para cada jogador, são extraídas informações individuais (nome, posição, clube, preço, média e última pontuação) 
+        // a partir da linha de dados do jogador, que é dividida por vírgulas usando o método split(","). Essas informações são armazenadas em variáveis correspondentes.
+        // Em seguida, é criado um objeto JogadorDeFutebol com as informações extraídas. Um novo painel (painelDoJogador) é criado e configurado com um layout BoxLayout vertical e uma borda vazia.
+        // Etiquetas JLabel são criadas para cada informação do jogador, exibindo o texto correspondente.
+        // Um botão botãoComprar é criado com o texto "Comprar". 
+        // Um novo listener de eventos é adicionado ao botão usando uma classe anônima que substitui o método actionPerformed(). Quando o botão é clicado, esse listener é acionado.
+        // Dentro do listener, é verificado se o saldo é suficiente para comprar o jogador (saldo é uma variável que armazena o saldo atual). 
+        // Se for suficiente, o jogador é adicionado à lista jogadoresComprados, o valor do jogador é subtraído do saldo, o saldo é atualizado e exibido na etiqueta saldoLabel, 
+        // uma mensagem de diálogo é exibida informando que o jogador foi comprado e o botão clicado é desativado.
+        // Caso o saldo seja insuficiente, uma mensagem de diálogo é exibida informando que o saldo é insuficiente para comprar o jogador.
+        // As etiquetas e o botão são adicionados ao painel do jogador (painelDoJogador), e esse painel é adicionado ao painel de jogadores (painelDeJogadores) no final do loop.
+        // Após o loop, os métodos revalidate() e repaint() são chamados no painel de jogadores para atualizar a exibição dos componentes.
         if (textoDoBotão.equals("Salvar")) {
             salvarJogadoresComprados();
         } else {
@@ -199,7 +213,7 @@ public class CartolaFC extends JFrame implements ActionListener {
             painelDeJogadores.repaint();
         }
     }
-    
+
     // Esse método recebe uma posição como parâmetro e retorna uma lista de jogadores filtrados por essa posição. 
     // Ele lê os dados de um arquivo chamado "jogadoresEditados.csv", onde cada linha contém informações separadas por vírgulas sobre um jogador.
     // O método percorre cada linha do arquivo, divide a linha em um array de strings usando a vírgula como separador e verifica se o segundo elemento (posição) corresponde à posição fornecida. 
@@ -221,7 +235,7 @@ public class CartolaFC extends JFrame implements ActionListener {
 
         return jogadores;
     }
-    
+
     // Este método é responsável por salvar os jogadores comprados em um arquivo chamado "jogadoresComprados.csv". 
     // Ele itera sobre a lista de jogadores comprados e grava as informações de cada jogador (nome, posição, clube e preço) como uma linha no arquivo. 
     // Cada jogador é separado por vírgulas, e o método write() é usado para escrever a linha no arquivo. O método newLine() é chamado para inserir uma nova linha após cada jogador.
